@@ -55,14 +55,16 @@ public class CardsMain : MonoBehaviour
     static Vector3 ScalLeftoutside = new Vector3(1, 1, 1);
     static Vector3 ScalRightoutside = new Vector3(1, 1, 1);
 
-    CubePosion cubePosion0 = new CubePosion(Position0, Angle0, Scal0);
-    CubePosion cubePosion1 = new CubePosion(Position1, Angle1, Scal1);
-    CubePosion cubePosion2 = new CubePosion(Position2, Angle2, Scal2);
-    CubePosion cubePosion3 = new CubePosion(Position3, Angle3, Scal3);
-    CubePosion cubePosion4 = new CubePosion(Position4, Angle4, Scal4);
-    CubePosion cubePosion5 = new CubePosion(Position5, Angle5, Scal5);
-    CubePosion cubeLeftoutside = new CubePosion(LeftoutsideP, AngleLeftoutside, ScalLeftoutside);
-    CubePosion cubeRightoutside = new CubePosion(RightoutsideP, AngleRightoutside, ScalRightoutside);
+    CubePosion cubePosion0 = new CubePosion(0, Position0, Angle0, Scal0);
+    CubePosion cubePosion1 = new CubePosion(1, Position1, Angle1, Scal1);
+    CubePosion cubePosion2 = new CubePosion(2, Position2, Angle2, Scal2);
+    CubePosion cubePosion3 = new CubePosion(3, Position3, Angle3, Scal3);
+    CubePosion cubePosion4 = new CubePosion(4, Position4, Angle4, Scal4);
+    CubePosion cubePosion5 = new CubePosion(5, Position5, Angle5, Scal5);
+    CubePosion cubeLeftoutside = new CubePosion(-1, LeftoutsideP, AngleLeftoutside, ScalLeftoutside);
+    CubePosion cubeRightoutside = new CubePosion(-2, RightoutsideP, AngleRightoutside, ScalRightoutside);
+
+    CubePosion focusedCubePosion;
 
     float moveDelta = -1;
     float speed = 0;
@@ -70,6 +72,9 @@ public class CardsMain : MonoBehaviour
     float acce = ACCE_MIN;
     enum State {LEFT,RIGHT,STOP};
     State state = State.STOP;
+
+    enum ClickArea {Zero,One,Two,Three,Four,Five,Six };
+    ClickArea clickArea = ClickArea.Zero;
 
     enum slideVector { nullVector, up, down, left, right };
     private Vector2 touchFirst = Vector2.zero; //手指开始按下的位置
@@ -94,8 +99,24 @@ public class CardsMain : MonoBehaviour
         //判断当前手指是按下事件 
         {
             touchFirst = Event.current.mousePosition;//记录开始按下的位置
+            log("..................................... MouseDown   mousePosition:" + touchFirst.ToString());
             mouseDown = true;
             downtime = Time.time;
+
+            //如果在运动中按下屏幕，则停止运动
+            if (speed > 0)
+            {
+                speed = 0;
+            }
+
+            if (state == State.STOP)
+            {
+                focusedCubePosion = getTouchedCube(touchFirst);
+                if(focusedCubePosion != null)
+                {
+                    focusCube(focusedCubePosion);
+                }
+            }
         }
 
         if (Event.current.type == EventType.MouseUp)
@@ -106,9 +127,9 @@ public class CardsMain : MonoBehaviour
             log("..................................... MouseUp   clicktime:" + clicktime);
             if (clicktime >0.8 && clicktime < 0.2)
             {
-                onClick();
+                onClick(focusedCubePosion.index);
             }
-
+            unfocusCube();
         }
 
         if (Event.current.type == EventType.MouseDrag)
@@ -208,20 +229,83 @@ public class CardsMain : MonoBehaviour
         }   // 滑动方法
     }
 
-    void onClick()
+    CubePosion getTouchedCube(Vector2 position)
+    {
+        if (position.x > 80 && touchFirst.x < 456 &&
+            position.y > 138 && touchFirst.y < 595)
+        {
+            return cubePosion0;
+        }
+        if (position.x > 538 && touchFirst.x < 750 &&
+            position.y > 290 && touchFirst.y < 545)
+        {
+            return cubePosion1;
+        }
+        if (position.x > 810 && touchFirst.x < 1020 &&
+            position.y > 298 && touchFirst.y < 560)
+        {
+            return cubePosion2;
+        }
+        if (position.x > 1089 && touchFirst.x < 1300 &&
+            position.y > 305 && touchFirst.y < 575)
+        {
+            return cubePosion3;
+        }
+        if (position.x > 1375 && touchFirst.x < 1655 &&
+            position.y > 300 && touchFirst.y < 600)
+        {
+            return cubePosion4;
+        }
+        if (position.x > 1738 && touchFirst.x < 1900 &&
+            position.y > 280 && touchFirst.y < 655)
+        {
+            return cubePosion5;
+        }
+
+        return null;
+    }
+    void onClick(int index)
     {
         log("onClick");
-        int index = getLeftsideCubeIndex();
-        startApp(index+"");
+        onUnityClick(index);
     }
 
     void onLongPressed()
     {
         log("onLongPressed");
-        if (speed > 0)
+        onUnityLongPressed();
+
+    }
+
+    void focusCube(CubePosion cubePosion)
+    {
+        foreach (CubeWrap cubeWrap in cubesList)
         {
-            acce = ACCE_MAX;
+            if (cubeWrap.startPosion == cubePosion)
+            {
+                cubeWrap.focused = true;
+                cubeWrap.cube.transform.localScale = cubePosion.scal * 1.1f;
+                break;
+            }
         }
+    }
+
+    void unfocusCube()
+    {
+        foreach (CubeWrap cubeWrap in cubesList)
+        {
+            if (cubeWrap.focused)
+            {
+                cubeWrap.focused = false;
+                cubeWrap.cube.transform.localScale = cubeWrap.startPosion.scal;
+                break;
+            }
+        }
+    }
+
+    void sortCards(string cards)
+    {
+        log("sortCards, cards: " + cards);
     }
 
     void onLanguageChanged(string language)
@@ -240,6 +324,8 @@ public class CardsMain : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        callAndroid();
+        onUnityBeforeStart();
         cube0 = GameObject.Find("Cube0");
         cube1 = GameObject.Find("Cube1");
         cube2 = GameObject.Find("Cube2");
@@ -312,35 +398,61 @@ public class CardsMain : MonoBehaviour
         cubeWrap5.startPosion = cubePosion5;
     //    cubes.AddLast(cubeWrap5);
         cubesList.Add(cubeWrap5);
-        ;
+        updateNextLeft();
         log("。。。start  cube0:" + cube0.transform.position.ToString());
         log("。。。start  cube1:" + cube1.transform.position.ToString());
         log("。。。start  cube2:" + cube2.transform.position.ToString());
         log("。。。start  cube3:" + cube3.transform.position.ToString());
         log("。。。start  cube4:" + cube4.transform.position.ToString());
         log("。。。start  cube5:" + cube5.transform.position.ToString());
-        updateNextLeft();
+        onUnityStart();
         READY = true;
-
-        callAndroid();
-        onUnitStart();
     }
 
-    void onUnitStart()
+    void onUnityClick(int index)
     {
-        if (DEBUG) Debug.Log("onUnitStart");
+        if (DEBUG) Debug.Log("onUnityClick " + index);
         if (jo != null)
         {
-            jo.Call("onUnitStart");
+            jo.Call("onUnityClick",index);
+        }
+    }
+
+    void onUnityLongPressed()
+    {
+        if (DEBUG) Debug.Log("onUnityLongPressed");
+        if (jo != null)
+        {
+            jo.Call("onUnityLongPressed");
+        }
+    }
+
+    void onUnityBeforeStart()
+    {
+        if (DEBUG) Debug.Log("onUnityBeforeStart");
+        if (jo != null)
+        {
+            jo.Call("onUnityBeforeStart");
+        }
+    }
+
+    void onUnityStart()
+    {
+        if (DEBUG) Debug.Log("onUnityStart");
+        if (jo != null)
+        {
+            jo.Call("onUnityStart");
         }
     }
     void callAndroid()
     {
+        #if UNITY_ANDROID && !UNITY_EDITOR
         if (jo == null)
         {
             jc = new AndroidJavaClass("com.unity3d.player.UnityPlayer");
             jo = jc.GetStatic<AndroidJavaObject>("currentActivity");
         }
+        #endif
     }
     void startApp(string activity)
     {
@@ -385,7 +497,7 @@ public class CardsMain : MonoBehaviour
         if (mouseDown)
         {
             float longClickTime = Time.time - downtime;
-            if (!longPressed && longClickTime > 0.4)
+            if (!longPressed && longClickTime > 0.3)
             {
                 longPressed = true;
                 onLongPressed();
@@ -442,7 +554,7 @@ public class CardsMain : MonoBehaviour
 
         } else
         {
-            if (moveDelta > 0)
+            if (moveDelta > 0f)
             {
                 moveDelta = moveDelta + Time.deltaTime * 1f;
             }
@@ -680,6 +792,7 @@ public class CardsMain : MonoBehaviour
 
     class CubePosion
     {
+        public int index = -3;
         public Vector3 position;
         public Vector3 angle;
         public Vector3 scal;
@@ -687,8 +800,9 @@ public class CardsMain : MonoBehaviour
         {
 
         }
-        public CubePosion(Vector3 position, Vector3 angle, Vector3 scal)
+        public CubePosion(int index, Vector3 position, Vector3 angle, Vector3 scal)
         {
+            this.index = index;
             this.position = position;
             this.angle = angle;
             this.scal = scal;
@@ -704,6 +818,7 @@ public class CardsMain : MonoBehaviour
         public GameObject cube;
         public CubePosion startPosion;
         public CubePosion nextPosion;
+        public bool focused = false;
         public CubeWrap()
         {
 
