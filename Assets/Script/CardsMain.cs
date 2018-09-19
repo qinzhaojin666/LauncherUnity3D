@@ -11,12 +11,15 @@ public class CardsMain : MonoBehaviour
     static float ACCE_MIN = 0.015f;
     static float ACCE_MAX = 0.15f;
 
-    GameObject cube0;
-    GameObject cube1;
-    GameObject cube2;
-    GameObject cube3;
-    GameObject cube4;
-    GameObject cube5;
+    GameObject navi;
+    GameObject media;
+    GameObject phone;
+    GameObject car;
+    GameObject umetrip;
+    GameObject store;
+    GameObject file;
+    GameObject tachograh;
+    GameObject kuwo;
 
     ArrayList cubesList = new ArrayList();
     CubeWrap cubeWrap0 = new CubeWrap();
@@ -25,6 +28,9 @@ public class CardsMain : MonoBehaviour
     CubeWrap cubeWrap3 = new CubeWrap();
     CubeWrap cubeWrap4 = new CubeWrap();
     CubeWrap cubeWrap5 = new CubeWrap();
+    CubeWrap cubeWrap6 = new CubeWrap();
+    CubeWrap cubeWrap7 = new CubeWrap();
+    CubeWrap cubeWrap8 = new CubeWrap();
 
 
     static Vector3 Position0 = new Vector3(0f - X_OFFSET, 0.1f, 0f);
@@ -33,6 +39,9 @@ public class CardsMain : MonoBehaviour
     static Vector3 Position3 = new Vector3(10f - X_OFFSET, 0f, 8f);
     static Vector3 Position4 = new Vector3(15f - X_OFFSET, 0f, 6f);
     static Vector3 Position5 = new Vector3(20f - X_OFFSET, 0f, 3.5f);
+    static Vector3 Position6 = new Vector3(47f - X_OFFSET, 3f, -5f);
+    static Vector3 Position7 = new Vector3(50f - X_OFFSET, 3f, -5f);
+    static Vector3 Position8 = new Vector3(-60f - X_OFFSET, 3f, 0f);
     static Vector3 LeftoutsideP = new Vector3(-55f - X_OFFSET, 2f, -5f);
     static Vector3 RightoutsideP = new Vector3(47f - X_OFFSET, 3f, -5f);
 
@@ -42,6 +51,9 @@ public class CardsMain : MonoBehaviour
     static Vector3 Angle3 = new Vector3(0f, 0f, 0f);
     static Vector3 Angle4 = new Vector3(0f, 27f, 0f);
     static Vector3 Angle5 = new Vector3(0f, 29f, 0f);
+    static Vector3 Angle6 = new Vector3(0f, 29f, 0f);
+    static Vector3 Angle7 = new Vector3(0f, 29f, 0f);
+    static Vector3 Angle8 = new Vector3(0f, 29f, 0f);
     static Vector3 AngleLeftoutside = new Vector3(0f, 10f, 0f);
     static Vector3 AngleRightoutside = new Vector3(0f, 39f, 0f);
     static Vector3 Angle_1 = new Vector3(0f, 0f, 0f);
@@ -52,6 +64,9 @@ public class CardsMain : MonoBehaviour
     static Vector3 Scal3 = new Vector3(1, 1, 1);
     static Vector3 Scal4 = new Vector3(1, 1, 1);
     static Vector3 Scal5 = new Vector3(1, 1, 1);
+    static Vector3 Scal6 = new Vector3(1, 1, 1);
+    static Vector3 Scal7 = new Vector3(1, 1, 1);
+    static Vector3 Scal8 = new Vector3(1, 1, 1);
     static Vector3 ScalLeftoutside = new Vector3(1, 1, 1);
     static Vector3 ScalRightoutside = new Vector3(1, 1, 1);
 
@@ -61,10 +76,14 @@ public class CardsMain : MonoBehaviour
     CubePosion cubePosion3 = new CubePosion(3, Position3, Angle3, Scal3);
     CubePosion cubePosion4 = new CubePosion(4, Position4, Angle4, Scal4);
     CubePosion cubePosion5 = new CubePosion(5, Position5, Angle5, Scal5);
+    CubePosion cubePosion6 = new CubePosion(6, Position6, Angle6, Scal6);
+    CubePosion cubePosion7 = new CubePosion(7, Position7, Angle7, Scal7);
+    CubePosion cubePosion8 = new CubePosion(8, Position8, Angle8, Scal8);
     CubePosion cubeLeftoutside = new CubePosion(-1, LeftoutsideP, AngleLeftoutside, ScalLeftoutside);
     CubePosion cubeRightoutside = new CubePosion(-2, RightoutsideP, AngleRightoutside, ScalRightoutside);
 
     CubePosion focusedCubePosion;
+    CubeWrap focusedCubeWrap;
 
     float moveDelta = -1;
     float speed = 0;
@@ -88,6 +107,7 @@ public class CardsMain : MonoBehaviour
     public float offsetTime = 0.1f;//判断的时间间隔 
     public float SlidingDistance = 0f;
 
+    bool sorting = false;
 
     AndroidJavaClass jc ;
     AndroidJavaObject jo;
@@ -114,7 +134,7 @@ public class CardsMain : MonoBehaviour
                 focusedCubePosion = getTouchedCube(touchFirst);
                 if(focusedCubePosion != null)
                 {
-                    focusCube(focusedCubePosion);
+                    focusedCubeWrap = focusCube(focusedCubePosion);
                 }
             }
         }
@@ -125,9 +145,9 @@ public class CardsMain : MonoBehaviour
             longPressed = false;
             clicktime = Time.time - downtime;
             log("..................................... MouseUp   clicktime:" + clicktime);
-            if (clicktime >0.8 && clicktime < 0.2)
+            if (clicktime >0.02 && clicktime < 0.2)
             {
-                onClick(focusedCubePosion.index);
+                onClick(focusedCubeWrap.cube.name);
             }
             unfocusCube();
         }
@@ -264,10 +284,10 @@ public class CardsMain : MonoBehaviour
 
         return null;
     }
-    void onClick(int index)
+    void onClick(string cube)
     {
         log("onClick");
-        onUnityClick(index);
+        onUnityClick(cube);
     }
 
     void onLongPressed()
@@ -277,7 +297,7 @@ public class CardsMain : MonoBehaviour
 
     }
 
-    void focusCube(CubePosion cubePosion)
+    CubeWrap focusCube(CubePosion cubePosion)
     {
         foreach (CubeWrap cubeWrap in cubesList)
         {
@@ -285,9 +305,10 @@ public class CardsMain : MonoBehaviour
             {
                 cubeWrap.focused = true;
                 cubeWrap.cube.transform.localScale = cubePosion.scal * 1.1f;
-                break;
+                return cubeWrap;
             }
         }
+        return null;
     }
 
     void unfocusCube()
@@ -303,9 +324,132 @@ public class CardsMain : MonoBehaviour
         }
     }
 
+    //cards: navi#media#hphone#car#umetrip#store#file#tachograh#kuwo
     void sortCards(string cards)
     {
+        sorting = true;
         log("sortCards, cards: " + cards);
+        if (state != State.STOP)
+        {
+            sorting = false;
+            log("sortCards, resort error, cards moving!");
+            return;
+        }
+        if (cards == null || cards.Equals(""))
+        {
+            sorting = false;
+            log("sortCards, input sort string is empty!");
+            return;
+        }
+        string[] cardsList = cards.Split('#');
+        if (cardsList.Length != 9)
+        {
+            sorting = false;
+            log("sortCards, input cards error,  size: " + cardsList.Length);
+            return;
+        }
+        GameObject cube0 = getCubeWithTag(cardsList[0]);
+        updateCubePosion(cube0, cubePosion0);
+        cubeWrap0.cube = cube0;
+        cubeWrap0.startPosion = cubePosion0;
+
+        GameObject cube1 = getCubeWithTag(cardsList[1]);
+        updateCubePosion(cube1, cubePosion1);
+        cubeWrap1.cube = cube1;
+        cubeWrap1.startPosion = cubePosion1;
+
+        GameObject cube2 = getCubeWithTag(cardsList[2]);
+        updateCubePosion(cube2, cubePosion2);
+        cubeWrap2.cube = cube2;
+        cubeWrap2.startPosion = cubePosion2;
+
+        GameObject cube3 = getCubeWithTag(cardsList[3]);
+        updateCubePosion(cube3, cubePosion3);
+        cubeWrap3.cube = cube3;
+        cubeWrap3.startPosion = cubePosion3;
+
+        GameObject cube4 = getCubeWithTag(cardsList[4]);
+        updateCubePosion(cube4, cubePosion4);
+        cubeWrap4.cube = cube4;
+        cubeWrap4.startPosion = cubePosion4;
+
+        GameObject cube5 = getCubeWithTag(cardsList[5]);
+        updateCubePosion(cube5, cubePosion5);
+        cubeWrap5.cube = cube5;
+        cubeWrap5.startPosion = cubePosion5;
+
+        GameObject cube6 = getCubeWithTag(cardsList[6]);
+        updateCubePosion(cube6, cubePosion6);
+        cubeWrap6.cube = cube6;
+        cubeWrap6.startPosion = cubePosion6;
+
+        GameObject cube7 = getCubeWithTag(cardsList[7]);
+        updateCubePosion(cube7, cubePosion7);
+        cubeWrap7.cube = cube7;
+        cubeWrap7.startPosion = cubePosion7;
+
+        GameObject cube8 = getCubeWithTag(cardsList[8]);
+        updateCubePosion(cube8, cubePosion8);
+        cubeWrap8.cube = cube8;
+        cubeWrap8.startPosion = cubePosion8;
+
+        updateNextLeft();
+        sorting = false;
+        log("sortCards, end: ");
+    }
+
+    void updateCubePosion(GameObject cube, CubePosion cubePosion )
+    {
+        if (cube == null)
+        {
+            log("updateCubePosion, cube is null");
+            return;
+        }
+        cube.transform.position = cubePosion.position;
+        cube.transform.localEulerAngles = cubePosion.angle;
+        cube.transform.localScale = cubePosion.scal;
+    }
+
+
+    GameObject getCubeWithTag(string card)
+    {
+        if (card.StartsWith("navi"))
+        {
+            return navi;
+        }
+        if (card.StartsWith("media"))
+        {
+            return media;
+        }
+        if (card.StartsWith("phone"))
+        {
+            return phone;
+        }
+        if (card.StartsWith("car"))
+        {
+            return car;
+        }
+        if (card.StartsWith("umetrip"))
+        {
+            return umetrip;
+        }
+        if (card.StartsWith("store"))
+        {
+            return store;
+        }
+        if (card.StartsWith("file"))
+        {
+            return file;
+        }
+        if (card.StartsWith("tachograh"))
+        {
+            return tachograh;
+        }
+        if (card.StartsWith("kuwo"))
+        {
+            return kuwo;
+        }
+        return null;
     }
 
     void onLanguageChanged(string language)
@@ -326,95 +470,120 @@ public class CardsMain : MonoBehaviour
     {
         callAndroid();
         onUnityBeforeStart();
-        cube0 = GameObject.Find("Cube0");
-        cube1 = GameObject.Find("Cube1");
-        cube2 = GameObject.Find("Cube2");
-        cube3 = GameObject.Find("Cube3");
-        cube4 = GameObject.Find("Cube4");
-        cube5 = GameObject.Find("Cube5");
+        navi = GameObject.Find("navi");
+        media = GameObject.Find("media");
+        phone = GameObject.Find("phone");
+        car = GameObject.Find("car");
+        umetrip = GameObject.Find("umetrip");
+        store = GameObject.Find("store");
+        file = GameObject.Find("file");
+        tachograh = GameObject.Find("tachograh");
+        kuwo = GameObject.Find("kuwo");
 
-        Position0 = cube0.transform.position;
-        Angle0 = cube0.transform.localEulerAngles;
-        Scal0 = cube0.transform.localScale;
-        cubePosion0.position = cube0.transform.position;
-        cubePosion0.angle = cube0.transform.localEulerAngles;
-        cubePosion0.scal = cube0.transform.localScale;
-        cubeWrap0.cube = cube0;
+        Position0 = navi.transform.position;
+        Angle0 = navi.transform.localEulerAngles;
+        Scal0 = navi.transform.localScale;
+        updateKeyPosition(cubePosion0, navi);
+        cubeWrap0.cube = navi;
         cubeWrap0.startPosion = cubePosion0;
        // cubes.AddLast(cubeWrap0);
         cubesList.Add(cubeWrap0);
 
-        Position1 = cube1.transform.position;
-        Angle1 = cube1.transform.localEulerAngles;
-        Scal1 = cube1.transform.localScale;
-        cubePosion1.position = cube1.transform.position;
-        cubePosion1.angle = cube1.transform.localEulerAngles;
-        cubePosion1.scal = cube1.transform.localScale;
-        cubeWrap1.cube = cube1;
+        Position1 = media.transform.position;
+        Angle1 = media.transform.localEulerAngles;
+        Scal1 = media.transform.localScale;
+        updateKeyPosition(cubePosion1, media);
+        cubeWrap1.cube = media;
         cubeWrap1.startPosion = cubePosion1;
         // cubes.AddLast(cubeWrap1);
         cubesList.Add(cubeWrap1);
 
-        Position2 = cube2.transform.position;
-        Angle2 = cube2.transform.localEulerAngles;
-        Scal2 = cube2.transform.localScale;
-        cubePosion2.position = cube2.transform.position;
-        cubePosion2.angle = cube2.transform.localEulerAngles;
-        cubePosion2.scal = cube2.transform.localScale;
-        cubeWrap2.cube = cube2;
+        Position2 = phone.transform.position;
+        Angle2 = phone.transform.localEulerAngles;
+        Scal2 = phone.transform.localScale;
+        updateKeyPosition(cubePosion2, phone);
+        cubeWrap2.cube = phone;
         cubeWrap2.startPosion = cubePosion2;
       //  cubes.AddLast(cubeWrap2);
         cubesList.Add(cubeWrap2);
 
-        Position3 = cube3.transform.position;
-        Angle3 = cube3.transform.localEulerAngles;
-        Scal3 = cube3.transform.localScale;
-        cubePosion3.position = cube3.transform.position;
-        cubePosion3.angle = cube3.transform.localEulerAngles;
-        cubePosion3.scal = cube3.transform.localScale;
-        cubeWrap3.cube = cube3;
+        Position3 = car.transform.position;
+        Angle3 = car.transform.localEulerAngles;
+        Scal3 = car.transform.localScale;
+        updateKeyPosition(cubePosion3, car);
+        cubeWrap3.cube = car;
         cubeWrap3.startPosion = cubePosion3;
         //cubes.AddLast(cubeWrap3);
         cubesList.Add(cubeWrap3);
 
-        Position4 = cube4.transform.position;
-        Angle4 = cube4.transform.localEulerAngles;
-        Scal4 = cube4.transform.localScale;
-        cubePosion4.position = cube4.transform.position;
-        cubePosion4.angle = cube4.transform.localEulerAngles;
-        cubePosion4.scal = cube4.transform.localScale;
-        cubeWrap4.cube = cube4;
+        Position4 = umetrip.transform.position;
+        Angle4 = umetrip.transform.localEulerAngles;
+        Scal4 = umetrip.transform.localScale;
+        updateKeyPosition(cubePosion4, umetrip);
+        cubeWrap4.cube = umetrip;
         cubeWrap4.startPosion = cubePosion4;
      //   cubes.AddLast(cubeWrap4);
         cubesList.Add(cubeWrap4);
 
-        Position5 = cube5.transform.position;
-        Angle5 = cube5.transform.localEulerAngles;
-        Scal5 = cube5.transform.localScale;
-        cubePosion5.position = cube5.transform.position;
-        cubePosion5.angle = cube5.transform.localEulerAngles;
-        cubePosion5.scal = cube5.transform.localScale;
-        cubeWrap5.cube = cube5;
+        Position5 = store.transform.position;
+        Angle5 = store.transform.localEulerAngles;
+        Scal5 = store.transform.localScale;
+        updateKeyPosition(cubePosion5, store);
+        cubeWrap5.cube = store;
         cubeWrap5.startPosion = cubePosion5;
     //    cubes.AddLast(cubeWrap5);
         cubesList.Add(cubeWrap5);
+
+        Position6 = file.transform.position;
+        Angle6 = file.transform.localEulerAngles;
+        Scal6 = file.transform.localScale;
+        updateKeyPosition(cubePosion6, file);
+        cubeWrap6.cube = file;
+        cubeWrap6.startPosion = cubePosion6;
+        cubesList.Add(cubeWrap6);
+
+        Position7 = tachograh.transform.position;
+        Angle7 = tachograh.transform.localEulerAngles;
+        Scal7 = tachograh.transform.localScale;
+        updateKeyPosition(cubePosion7, tachograh);
+        cubeWrap7.cube = tachograh;
+        cubeWrap7.startPosion = cubePosion7;
+        cubesList.Add(cubeWrap7);
+
+        Position8 = kuwo.transform.position;
+        Angle8 = kuwo.transform.localEulerAngles;
+        Scal8 = kuwo.transform.localScale;
+        updateKeyPosition(cubePosion8, kuwo);
+        cubeWrap8.cube = kuwo;
+        cubeWrap8.startPosion = cubePosion8;
+        cubesList.Add(cubeWrap8);
+
         updateNextLeft();
-        log("。。。start  cube0:" + cube0.transform.position.ToString());
-        log("。。。start  cube1:" + cube1.transform.position.ToString());
-        log("。。。start  cube2:" + cube2.transform.position.ToString());
-        log("。。。start  cube3:" + cube3.transform.position.ToString());
-        log("。。。start  cube4:" + cube4.transform.position.ToString());
-        log("。。。start  cube5:" + cube5.transform.position.ToString());
+        /*
+        log("。。。start  cube0:" + cube0.transform.position.ToString() + cube0.name);
+        log("。。。start  cube1:" + cube1.transform.position.ToString() + cube1.name);
+        log("。。。start  cube2:" + cube2.transform.position.ToString() + cube2.name);
+        log("。。。start  cube3:" + cube3.transform.position.ToString() + cube3.name);
+        log("。。。start  cube4:" + cube4.transform.position.ToString() + cube4.name);
+        log("。。。start  cube5:" + cube5.transform.position.ToString() + cube5.name);
+        */
         onUnityStart();
         READY = true;
     }
 
-    void onUnityClick(int index)
+    void updateKeyPosition(CubePosion cubePosion, GameObject gameObject)
     {
-        if (DEBUG) Debug.Log("onUnityClick " + index);
+        cubePosion.position = gameObject.transform.position;
+        cubePosion.angle = gameObject.transform.localEulerAngles;
+        cubePosion.scal = gameObject.transform.localScale;
+    }
+
+    void onUnityClick(string cube)
+    {
+        if (DEBUG) Debug.Log("onUnityClick " + cube);
         if (jo != null)
         {
-            jo.Call("onUnityClick",index);
+            jo.Call("onUnityClick", cube);
         }
     }
 
@@ -613,6 +782,11 @@ public class CardsMain : MonoBehaviour
     void startMove()
     {
         log("startMove,  >>>>>>>>>>>>>");
+        if (sorting)
+        {
+            log("startMove,  sorting, not start.");
+            return;
+        }
         if (speed > 0 || moveDelta > 0) return;
         if (state == State.LEFT)
         {
@@ -638,13 +812,13 @@ public class CardsMain : MonoBehaviour
         foreach (CubeWrap cubeWrap in cubesList)
         {
             //log("---moveToLeft---  foreach:" + delta);
-
+            /*
             if (cubeWrap.nextPosion.Equals2(LeftoutsideP) && delta > 0.4)
             {
                 cubeWrap.startPosion = cubeRightoutside;
                 cubeWrap.nextPosion = cubePosion5;
                 log("moveToLeft  leftoutside to right outside: " + cubeWrap.toString());
-            }
+            }*/
             cubeWrap.cube.transform.position = Vector3.Lerp(cubeWrap.startPosion.position, cubeWrap.nextPosion.position, delta);
             Vector3 startAnge = cubeWrap.startPosion.angle;
             if (startAnge.Equals(Angle_1))
@@ -663,13 +837,13 @@ public class CardsMain : MonoBehaviour
         foreach (CubeWrap cubeWrap in cubesList)
         {
             //log("---moveToLeft---  foreach:" + delta);
-
+            /*
             if (cubeWrap.nextPosion.Equals2(RightoutsideP) && delta > 0.4)
             {
                 cubeWrap.startPosion = cubeLeftoutside;
                 cubeWrap.nextPosion = cubePosion0;
                 log("moveToLeft  leftoutside to right outside: " + cubeWrap.toString());
-            }
+            }*/
             cubeWrap.cube.transform.position = Vector3.Lerp(cubeWrap.startPosion.position, cubeWrap.nextPosion.position, delta);
             Vector3 nextAnge = cubeWrap.nextPosion.angle;
             if (nextAnge.Equals(Angle_1))
@@ -698,8 +872,8 @@ public class CardsMain : MonoBehaviour
 
         if (Vector3.Distance(currentP, Position0) < DISTANCE_DELTA)
         {
-            log("nextLeftPosion: cubeLeftoutside");
-            return cubeLeftoutside;
+            log("nextLeftPosion: cubePosion8");
+            return cubePosion8;
         }
  
         if (Vector3.Distance(currentP, Position1) < DISTANCE_DELTA)
@@ -733,11 +907,30 @@ public class CardsMain : MonoBehaviour
             return cubePosion4;
         }
 
+        if (Vector3.Distance(currentP, Position6) < DISTANCE_DELTA)
+        {
+            log("nextLeftPosion: cubePosion5");
+            return cubePosion5;
+        }
+
+        if (Vector3.Distance(currentP, Position7) < DISTANCE_DELTA)
+        {
+            log("nextLeftPosion: cubePosion6");
+            return cubePosion6;
+        }
+
+        if (Vector3.Distance(currentP, Position8) < DISTANCE_DELTA)
+        {
+            log("nextLeftPosion: cubePosion7");
+            return cubePosion7;
+        }
+        /*
         if (Vector3.Distance(currentP, LeftoutsideP) < DISTANCE_DELTA)
         {
             log("nextLeftPosion: cubePosion5");
             return cubePosion5;
         }
+        */
         log("----nextLeftPosion default:cubePosion0 ");
 
         return cubePosion0;
@@ -776,11 +969,22 @@ public class CardsMain : MonoBehaviour
 
         if (Vector3.Distance(currentP, Position5) < DISTANCE_DELTA)
         {
-            log("nextLeftPosion: cubeRightoutside");
-            return cubeRightoutside;
+            log("nextLeftPosion: cubePosion6");
+            return cubePosion6;
         }
 
-        if (Vector3.Distance(currentP, RightoutsideP) < DISTANCE_DELTA)
+        if (Vector3.Distance(currentP, Position6) < DISTANCE_DELTA)
+        {
+            log("nextLeftPosion: cubePosion7");
+            return cubePosion7;
+        }
+
+        if (Vector3.Distance(currentP, Position7) < DISTANCE_DELTA)
+        {
+            log("nextLeftPosion: cubePosion8");
+            return cubePosion8;
+        }
+        if (Vector3.Distance(currentP, Position8) < DISTANCE_DELTA)
         {
             log("nextRightPosion: cubePosion0");
             return cubePosion0;
