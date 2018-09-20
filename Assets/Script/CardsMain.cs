@@ -105,9 +105,10 @@ public class CardsMain : MonoBehaviour
     private float clicktime;
     private float timer;//时间计数器  
     public float offsetTime = 0.1f;//判断的时间间隔 
-    public float SlidingDistance = 0f;
+    public float SlidingDistance = 1f;
 
     bool sorting = false;
+    private string language = "zh";
 
     AndroidJavaClass jc ;
     AndroidJavaObject jo;
@@ -119,15 +120,10 @@ public class CardsMain : MonoBehaviour
         //判断当前手指是按下事件 
         {
             touchFirst = Event.current.mousePosition;//记录开始按下的位置
-            log("..................................... MouseDown   mousePosition:" + touchFirst.ToString());
+            touchSecond = Event.current.mousePosition;
+            log("Gesture................... MouseDown   mousePosition:" + touchFirst.ToString());
             mouseDown = true;
             downtime = Time.time;
-
-            //如果在运动中按下屏幕，则停止运动
-            if (speed > 0)
-            {
-                speed = 0;
-            }
 
             if (state == State.STOP)
             {
@@ -144,7 +140,7 @@ public class CardsMain : MonoBehaviour
             mouseDown = false ;
             longPressed = false;
             clicktime = Time.time - downtime;
-            log("..................................... MouseUp   clicktime:" + clicktime);
+            log("Gesture............................. MouseUp   clicktime:" + clicktime);
             if (clicktime >0.02 && clicktime < 0.2)
             {
                 onClick(focusedCubeWrap.cube.name);
@@ -155,8 +151,8 @@ public class CardsMain : MonoBehaviour
         if (Event.current.type == EventType.MouseDrag)
         //判断当前手指是拖动事件
         {
-            log("..................................... MouseDrag");
             touchSecond = Event.current.mousePosition;
+            log("Gesture.............................. MouseDrag  mousePosition:" + touchSecond.ToString());
 
             timer += Time.deltaTime;  //计时器
 
@@ -181,15 +177,23 @@ public class CardsMain : MonoBehaviour
                         state = State.LEFT;
                     }
                     currentVector = slideVector.left;
+                
 
                     if (speed > 0)
                     {
-                        log("left......................................already start !, speed = " + speed);
+                        if (state == State.LEFT)
+                        {
+                            speed = speed + 1;
+                        } else if (state == State.RIGHT)
+                        {
+                            speed = 0;
+                        }
+                        log("Gesture left...........................already start !, speed = " + speed);
                         return;
                     }
                     acce = ACCE_MIN;
-                    startSpeed = x /(timer * 400);
-                    log("left , startSpeed = " + startSpeed);
+                    startSpeed = x /(timer * 600);
+                    log("Gesture left , startSpeed = " + startSpeed);
                     startMove();
                 }
                 else if (y > x + SlidingDistance && y < -x - SlidingDistance)
@@ -208,12 +212,20 @@ public class CardsMain : MonoBehaviour
 
                     if (speed > 0)
                     {
-                        log("right......................................already start !, speed = " + speed);
+                        if (state == State.RIGHT)
+                        {
+                            speed = speed + 1;
+                        }
+                        else if (state == State.LEFT)
+                        {
+                            speed = 0;
+                        }
+                        log("Gesture right........................already start !, speed = " + speed);
                         return;
                     }
                     acce = ACCE_MIN;
-                    startSpeed =0 - x / (timer * 400);
-                    log("right ,startSpeed = " + startSpeed);
+                    startSpeed =0 - x / (timer * 600);
+                    log("Gesture right ,startSpeed = " + startSpeed);
                     startMove();
                 }
                 else if (y > x + SlidingDistance && y - SlidingDistance > -x)
@@ -237,11 +249,15 @@ public class CardsMain : MonoBehaviour
                     log("Down");
 
                     currentVector = slideVector.down;
+                } else
+                {
+                    log("Gesture  onPressed");
+                    onPressed();
                 }
 
                 timer = 0;
                 touchFirst = touchSecond;
-            }
+            } 
             if (Event.current.type == EventType.MouseUp)
             {//滑动结束  
                 currentVector = slideVector.nullVector;
@@ -290,6 +306,17 @@ public class CardsMain : MonoBehaviour
         onUnityClick(cube);
     }
 
+    void onPressed()
+    {
+        log("onPressed");
+        //如果在运动中按下屏幕，则停止运动
+        if (speed > 0)
+        {
+            speed = 0;
+        }
+
+    }
+
     void onLongPressed()
     {
         log("onLongPressed");
@@ -322,6 +349,7 @@ public class CardsMain : MonoBehaviour
                 break;
             }
         }
+        focusedCubePosion = null;
     }
 
     //cards: navi#media#hphone#car#umetrip#store#file#tachograh#kuwo
@@ -452,16 +480,50 @@ public class CardsMain : MonoBehaviour
         return null;
     }
 
+    //切换语言language: eng, cn
     void onLanguageChanged(string language)
     {
         log("onLanguageChanged, language:" + language);
-        if (cubesList.Count != 6)
+        this.language = language;
+        if (cubesList.Count != 9)
         {
             return;
         }
         foreach (CubeWrap cubeWrap in cubesList)
         {
             cubeWrap.cube.SendMessage("changeLanguage", language);
+        }
+    }
+
+    //设置多媒体卡片上的信息,infor: music,radio
+    void setMediaCardsInfor(string infor)
+    {
+        log("setMediaCardsInfor, infor:" + infor);
+        if (infor == null)
+        {
+            return;
+        }
+        if(infor.Equals("radio"))
+        {
+            if (language.Equals("zh"))
+            {
+                media.SendMessage("updateTexture", 0);
+
+            } else
+            {
+                media.SendMessage("updateTexture", 1);
+            }
+        } else if (infor.Equals("music"))
+        {
+            if (language.Equals("zh"))
+            {
+                media.SendMessage("updateTexture", 2);
+
+            }
+            else
+            {
+                media.SendMessage("updateTexture", 3);
+            }
         }
     }
 
@@ -636,9 +698,10 @@ public class CardsMain : MonoBehaviour
     {
         if (!DEBUG) return;
         Debug.Log(msg);
+        /*
         if (jo != null) { 
            jo.Call("ULog", msg);
-        }
+        }*/
     }
 
     void onMoveStart(int index)
@@ -675,9 +738,9 @@ public class CardsMain : MonoBehaviour
         speed = speed - acce;
         //  log("Update:  speed= " + speed);
        // log("Update:  speed= " + speed);
-        if (speed > 2f)
+        if (speed > 4f)
         {
-            speed = 2f;
+            speed = 4f;
         }
         if (moveDelta >= 1)
         {
@@ -706,7 +769,7 @@ public class CardsMain : MonoBehaviour
                 return;
             }
         }
-        if (speed > 1f)
+        if (speed > 1.8f)
         {
             moveDelta = moveDelta + Time.deltaTime * speed;
             if (state == State.LEFT)
@@ -725,7 +788,7 @@ public class CardsMain : MonoBehaviour
         {
             if (moveDelta > 0f)
             {
-                moveDelta = moveDelta + Time.deltaTime * 1f;
+                moveDelta = moveDelta + Time.deltaTime * 1.8f;
             }
            // log("Update:  speed= " + speed + "  moveDelta=" + moveDelta);
             speed = 0;

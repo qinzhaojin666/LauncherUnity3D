@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SwitchLanguage : MonoBehaviour {
+public class CardInfo : MonoBehaviour {
     public Texture2D[] textures ; //声明一个数组型的图片库；
     private float i = 0; //声明i为浮点数0;
 
@@ -28,5 +28,10 @@ public class SwitchLanguage : MonoBehaviour {
         {
             gameObject.GetComponent<Renderer>().material.mainTexture = textures[1];
         }
+    }
+
+    public void updateTexture(int index)
+    {
+        gameObject.GetComponent<Renderer>().material.mainTexture = textures[index];
     }
 }

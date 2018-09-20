@@ -136,7 +136,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 265881416}
   m_LocalRotation: {x: -0, y: 0.01745245, z: -0, w: 0.99984777}
-  m_LocalPosition: {x: 50, y: 0.2, z: 10}
+  m_LocalPosition: {x: 60, y: 0.2, z: 22}
   m_LocalScale: {x: 8, y: 9.3, z: 5}
   m_Children: []
   m_Father: {fileID: 865104484}
@@ -156,6 +156,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: da82d26ecaa52aa4ab6731df5ce2fc2e, type: 3}
   - {fileID: 2800000, guid: 392dcf126879f3e43ac165e0ae2a307d, type: 3}
+  i: 0
 --- !u!23 &265881419
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -309,7 +310,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 644223939}
   m_LocalRotation: {x: -0, y: 0.01745245, z: -0, w: 0.99984777}
-  m_LocalPosition: {x: 50, y: 0.2, z: -15}
+  m_LocalPosition: {x: 40, y: 0.2, z: -25}
   m_LocalScale: {x: 8, y: 9.3, z: 5}
   m_Children: []
   m_Father: {fileID: 865104484}
@@ -329,6 +330,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: f9e7db8bad96dce4db54691310c6fbdd, type: 3}
   - {fileID: 2800000, guid: 6bbf200bf249a6c4cac3685dac26e251, type: 3}
+  i: 0
 --- !u!23 &644223942
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -705,6 +707,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: 1097c5e6c41a1774da3afd3fe80d7141, type: 3}
   - {fileID: 2800000, guid: 99f84a2d50b737946ab7b2d730ce95ae, type: 3}
+  i: 0
 --- !u!1 &1085425863
 GameObject:
   m_ObjectHideFlags: 0
@@ -807,6 +810,9 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: 3bbb998d9d8dfd54f9ff59867728f8a8, type: 3}
   - {fileID: 2800000, guid: 2d851d154ff012c46bd24380a0705f9b, type: 3}
+  - {fileID: 2800000, guid: 1b3fa7fdf4919a64591d12cecb30f0fc, type: 3}
+  - {fileID: 2800000, guid: 93a1b6127c47fc74a822a94115c05b0b, type: 3}
+  i: 0
 --- !u!1 &1144642021
 GameObject:
   m_ObjectHideFlags: 0
@@ -923,7 +929,7 @@ Transform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1386358982}
   m_LocalRotation: {x: -0, y: 0.28401548, z: -0, w: -0.95881975}
-  m_LocalPosition: {x: 15, y: 2, z: -30}
+  m_LocalPosition: {x: -25, y: 2, z: -10}
   m_LocalScale: {x: 9, y: 10.5, z: 0.2}
   m_Children: []
   m_Father: {fileID: 865104484}
@@ -943,6 +949,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: 9cfc3db2d5ea67a42b397f2e87e31680, type: 3}
   - {fileID: 2800000, guid: f6e2acbb816cbb748ac40f638ea3059a, type: 3}
+  i: 0
 --- !u!23 &1386358985
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1086,6 +1093,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: aa140d63e106d6749bbe65ad0b38f3a4, type: 3}
   - {fileID: 2800000, guid: 072749ebcd3a69d439a7d5f391d1e6a4, type: 3}
+  i: 0
 --- !u!1001 &1575868753
 Prefab:
   m_ObjectHideFlags: 0
@@ -1269,6 +1277,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: b44da7c1bbb3d1d42b54e7783cac3af8, type: 3}
   - {fileID: 2800000, guid: aa3cd095944af8f47982e4356076d246, type: 3}
+  i: 0
 --- !u!1 &1721167727
 GameObject:
   m_ObjectHideFlags: 0
@@ -1357,6 +1366,7 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: 324ec6f62343f874badd76a5cd93e130, type: 3}
   - {fileID: 2800000, guid: 0acba0992137faf458663a83f8df9db6, type: 3}
+  i: 0
 --- !u!1 &1814565332
 GameObject:
   m_ObjectHideFlags: 0
@@ -1549,3 +1559,4 @@ MonoBehaviour:
   textures:
   - {fileID: 2800000, guid: 454c183858aa6d54e93ccec2f47beb59, type: 3}
   - {fileID: 2800000, guid: 0c787a4b18cfc114a8ca7772c40af283, type: 3}
+  i: 0
