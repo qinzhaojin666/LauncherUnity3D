@@ -98,6 +98,7 @@ public class CardsMain : MonoBehaviour
     enum slideVector { nullVector, up, down, left, right };
     private Vector2 touchFirst = Vector2.zero; //手指开始按下的位置
     private Vector2 touchSecond = Vector2.zero; //手指拖动的位置
+    private Vector2 touchThird = Vector2.zero; //手指抬起的位置
     private slideVector currentVector = slideVector.nullVector;//当前滑动方向
     private float downtime;
     private bool mouseDown = false;
@@ -105,7 +106,7 @@ public class CardsMain : MonoBehaviour
     private float clicktime;
     private float timer;//时间计数器  
     public float offsetTime = 0.1f;//判断的时间间隔 
-    public float SlidingDistance = 1f;
+    public float SlidingDistance = 5f;
 
     bool sorting = false;
     private string language = "zh";
@@ -120,8 +121,8 @@ public class CardsMain : MonoBehaviour
         //判断当前手指是按下事件 
         {
             touchFirst = Event.current.mousePosition;//记录开始按下的位置
-            touchSecond = Event.current.mousePosition;
-            log("Gesture................... MouseDown   mousePosition:" + touchFirst.ToString());
+            touchThird = Event.current.mousePosition;
+            log("Gesture.............................. MouseDown   mousePosition:" + touchFirst.ToString());
             mouseDown = true;
             downtime = Time.time;
 
@@ -137,15 +138,27 @@ public class CardsMain : MonoBehaviour
 
         if (Event.current.type == EventType.MouseUp)
         {
-            mouseDown = false ;
+            mouseDown = false;
             longPressed = false;
             clicktime = Time.time - downtime;
-            log("Gesture............................. MouseUp   clicktime:" + clicktime);
-            if (clicktime >0.02 && clicktime < 0.2)
+            touchThird = Event.current.mousePosition;
+            log("Gesture.............................. MouseUp   clicktime:" + clicktime);
+            if (clicktime > 0.02 && clicktime < 0.2)
             {
                 onClick(focusedCubeWrap.cube.name);
             }
             unfocusCube();
+
+            //加速滑动
+            float distance = touchThird.x - touchFirst.x;
+            if (clicktime > 0.2 && (distance > 10 || distance < -10))
+            {
+                if (speed > 0)
+                {
+                    speed = speed + 2;
+                    log("Gesture...........acce speed ! ");
+                }
+            }
         }
 
         if (Event.current.type == EventType.MouseDrag)
@@ -181,20 +194,22 @@ public class CardsMain : MonoBehaviour
 
                     if (speed > 0)
                     {
-                        if (state == State.LEFT)
-                        {
-                            speed = speed + 1;
-                        } else if (state == State.RIGHT)
+                        if (state == State.RIGHT)
                         {
                             speed = 0;
                         }
-                        log("Gesture left...........................already start !, speed = " + speed);
-                        return;
+                        if (state == State.LEFT)
+                        {
+                            speed = speed + 1;
+                            log("Gesture...........acce speed ! ");
+                        }
+                        log("Gesture left..............already start !, speed = " + speed);
+                    } else {
+                        acce = ACCE_MIN;
+                        startSpeed = x / (timer * 600);
+                        log("Gesture left , startSpeed = " + startSpeed);
+                        startMove();
                     }
-                    acce = ACCE_MIN;
-                    startSpeed = x /(timer * 600);
-                    log("Gesture left , startSpeed = " + startSpeed);
-                    startMove();
                 }
                 else if (y > x + SlidingDistance && y < -x - SlidingDistance)
                 {
@@ -212,21 +227,25 @@ public class CardsMain : MonoBehaviour
 
                     if (speed > 0)
                     {
-                        if (state == State.RIGHT)
-                        {
-                            speed = speed + 1;
-                        }
-                        else if (state == State.LEFT)
+                        if (state == State.LEFT)
                         {
                             speed = 0;
                         }
-                        log("Gesture right........................already start !, speed = " + speed);
-                        return;
+                        if (state == State.RIGHT)
+                        {
+                            speed = speed + 1;
+                            log("Gesture...........acce speed ! ");
+                        }
+                        log("Gesture right..............already start !, speed = " + speed);
+                       
+                    } else
+                    {
+                        acce = ACCE_MIN;
+                        startSpeed = 0 - x / (timer * 600);
+                        log("Gesture right ,startSpeed = " + startSpeed);
+                        startMove();
                     }
-                    acce = ACCE_MIN;
-                    startSpeed =0 - x / (timer * 600);
-                    log("Gesture right ,startSpeed = " + startSpeed);
-                    startMove();
+
                 }
                 else if (y > x + SlidingDistance && y - SlidingDistance > -x)
                 {
@@ -257,6 +276,7 @@ public class CardsMain : MonoBehaviour
 
                 timer = 0;
                 touchFirst = touchSecond;
+                log("Gesture  reset !");
             } 
             if (Event.current.type == EventType.MouseUp)
             {//滑动结束  
@@ -349,6 +369,7 @@ public class CardsMain : MonoBehaviour
                 break;
             }
         }
+        focusedCubeWrap = null;
         focusedCubePosion = null;
     }
 
@@ -829,7 +850,7 @@ public class CardsMain : MonoBehaviour
         foreach (CubeWrap cubeWrap in cubesList)
         {
             cubeWrap.nextPosion = nextLeftPosion(cubeWrap.cube.transform.position);
-            log("updateNextLeft: " + cubeWrap.toString());
+           // log("updateNextLeft: " + cubeWrap.toString());
         }
     }
 
@@ -838,7 +859,7 @@ public class CardsMain : MonoBehaviour
         foreach (CubeWrap cubeWrap in cubesList)
         {
             cubeWrap.nextPosion = nextRightPosion(cubeWrap.cube.transform.position);
-            log("updateNextRight: " + cubeWrap.toString());
+           // log("updateNextRight: " + cubeWrap.toString());
         }
     }
 

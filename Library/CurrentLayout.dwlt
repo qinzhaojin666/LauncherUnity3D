@@ -252,8 +252,8 @@ MonoBehaviour:
     y: 0
     width: 1314
     height: 510
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 204, y: 221}
+  m_MaxSize: {x: 4004, y: 4021}
   m_ActualView: {fileID: 19}
   m_Panes:
   - {fileID: 18}
@@ -262,7 +262,7 @@ MonoBehaviour:
   - {fileID: 13}
   - {fileID: 12}
   m_Selected: 1
-  m_LastSelected: 0
+  m_LastSelected: 4
 --- !u!114 &12
 MonoBehaviour:
   m_ObjectHideFlags: 52
@@ -290,14 +290,14 @@ MonoBehaviour:
     width: 1310
     height: 489
   m_SceneLighting: 1
-  lastFramingTime: 86009.86886265238
+  lastFramingTime: 15320.545007062754
   m_2DMode: 0
   m_isRotationLocked: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 18, y: 2.5, z: -17}
+    m_Target: {x: -8.350021, y: 1.4100001, z: 2.5313435}
     speed: 2
-    m_Value: {x: 18, y: 2.5, z: -17}
+    m_Value: {x: -8.350021, y: 1.4100001, z: 2.5313435}
   m_RenderMode: 0
   m_ValidateTrueMetals: 0
   m_SceneViewState:
@@ -324,9 +324,9 @@ MonoBehaviour:
     speed: 2
     m_Value: {x: -0.7071068, y: 0, z: -0, w: -0.7071068}
   m_Size:
-    m_Target: 126.7346
+    m_Target: 155.25594
     speed: 2
-    m_Value: 126.7346
+    m_Value: 155.25594
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -453,33 +453,33 @@ MonoBehaviour:
     m_ShowAllHits: 0
     m_SearchArea: 0
     m_Folders:
-    - Assets/Plugins/Android/libs
+    - Assets/Script
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/Plugins/Android/libs
+  - Assets/Script
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\Unity3D_Work\LauncherUI
   m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: b25b0000
-    m_LastClickedID: 23474
-    m_ExpandedIDs: 000000000e260000162600006e2600007a2600009c260000a82600001228000000ca9a3bffffff7f
+    m_SelectedIDs: c4260000
+    m_LastClickedID: 9924
+    m_ExpandedIDs: 000000000e260000122600001a2600007c26000098260000a02600004a2800004c28000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Android
-      m_OriginalName: Android
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 9850
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 1
       m_ClientGUIView: {fileID: 5}
     m_SearchString: 
@@ -493,7 +493,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000000e260000162600006e2600009c260000a826000012280000
+    m_ExpandedIDs: 000000000e260000122600007c26000098260000a02600004a2800004c280000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -574,7 +574,7 @@ MonoBehaviour:
     y: 100
     width: 386
     height: 910
-  m_ScrollPosition: {x: 0, y: 360}
+  m_ScrollPosition: {x: 0, y: 0}
   m_InspectorMode: 0
   m_PreviewResizer:
     m_CachedPref: 277
@@ -609,23 +609,23 @@ MonoBehaviour:
     height: 489
   m_TreeViewState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 40010000
-    m_LastClickedID: 0
-    m_ExpandedIDs: c4b7a5ff7ab8a5ff86b9a5ff74caa5ff4ccba5ff58cca5fff2daa5ffcadba5ffdadca5ff4e1da6ff2c1ea6ff3c1fa6ff1e3ca6ff163da6ff223ea6ff4847a6ff4048a6ff4c49a6ff4c55a6ff4456a6ff5057a6ff2624ffffe824fffff425ffff5842ffff1c43ffff2844fffff85effffa85fffffb460ffff8669ffff326affff3e6bffff3c7effffec7efffff87fffff5c8fffff0c90ffff1891ffff24b0ffffd0b0ffffdcb1ffff8cddffff3cdeffff48dfffff14e7ffffc2e7ffffcee8ffff1afcffff00000000403e0000
+    m_SelectedIDs: 3a400000
+    m_LastClickedID: 16442
+    m_ExpandedIDs: 5a1cfcff101dfcff1c1efcff4044fefff644feff0246feff38b0ffffeeb0fffffab1ffff2ebcffffe4bcfffff0bdffff4ac9ffff00caffff0ccbffffa0d6ffff56d7ffff62d8ffff08e0ffffbee0ffffcae1ffff8ae9ffff40eaffff4cebffff2ef5ffffe4f5fffff4f6ffff1afcffff00000000ce340000e63a000034400000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
-      m_Name: Main Camera
-      m_OriginalName: Main Camera
+      m_Name: 
+      m_OriginalName: 
       m_EditFieldRect:
         serializedVersion: 2
         x: 0
         y: 0
         width: 0
         height: 0
-      m_UserData: 15964
+      m_UserData: 0
       m_IsWaitingForDelay: 0
       m_IsRenaming: 0
-      m_OriginalEventType: 0
+      m_OriginalEventType: 11
       m_IsRenamingFilename: 0
       m_ClientGUIView: {fileID: 4}
     m_SearchString: 
