@@ -96,6 +96,7 @@ public class CardsMain : MonoBehaviour
     ClickArea clickArea = ClickArea.Zero;
 
     enum slideVector { nullVector, up, down, left, right };
+    private Vector2 touchDown = Vector2.zero; //手指开始按下的位置
     private Vector2 touchFirst = Vector2.zero; //手指开始按下的位置
     private Vector2 touchSecond = Vector2.zero; //手指拖动的位置
     private Vector2 touchThird = Vector2.zero; //手指抬起的位置
@@ -120,6 +121,7 @@ public class CardsMain : MonoBehaviour
         if (Event.current.type == EventType.MouseDown)
         //判断当前手指是按下事件 
         {
+            touchDown = Event.current.mousePosition;
             touchFirst = Event.current.mousePosition;//记录开始按下的位置
             touchThird = Event.current.mousePosition;
             log("Gesture.............................. MouseDown   mousePosition:" + touchFirst.ToString());
@@ -142,15 +144,16 @@ public class CardsMain : MonoBehaviour
             longPressed = false;
             clicktime = Time.time - downtime;
             touchThird = Event.current.mousePosition;
-            log("Gesture.............................. MouseUp   clicktime:" + clicktime);
-            if (clicktime > 0.02 && clicktime < 0.2)
+            float distance = touchThird.x - touchFirst.x;
+
+            log("Gesture.............................. MouseUp   clicktime:" + clicktime  + "  distance:" + distance);
+            if (clicktime > 0.02 && clicktime < 0.2 && distance < 5 && distance > -5 && state == State.STOP)
             {
                 onClick(focusedCubeWrap.cube.name);
             }
             unfocusCube();
 
             //加速滑动
-            float distance = touchThird.x - touchFirst.x;
             if (clicktime > 0.2 && (distance > 10 || distance < -10))
             {
                 if (speed > 0)
@@ -750,7 +753,9 @@ public class CardsMain : MonoBehaviour
         if (mouseDown)
         {
             float longClickTime = Time.time - downtime;
-            if (!longPressed && longClickTime > 0.3)
+            float distance = touchSecond.x - touchDown.x;
+            log("Update: longPressed distance= " + distance);
+            if (!longPressed && longClickTime > 0.5 && state == State.STOP && distance < 10 && distance > -10)
             {
                 longPressed = true;
                 onLongPressed();
