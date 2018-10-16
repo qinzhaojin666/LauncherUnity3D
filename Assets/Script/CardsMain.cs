@@ -110,6 +110,9 @@ public class CardsMain : MonoBehaviour
     private float timer;//时间计数器  
     public float offsetTime = 0.1f;//判断的时间间隔 
     public float SlidingDistance = 5f;
+    private float dragDetaDistance = 0f;
+    private float dragDetaTime = 0f;
+    private float dragTime = 0f;
 
     bool slowMove = false;
     bool sorting = false;
@@ -151,18 +154,21 @@ public class CardsMain : MonoBehaviour
             touchThird = Event.current.mousePosition;
             float distance = touchThird.x - touchFirst.x;
 
+
             log("Gesture.............................. MouseUp   clicktime:" + clicktime  + "  distance:" + distance  + "  touchUp:" + touchUp);
             if (focusedCubeWrap != null && clicktime > 0.02 && clicktime < 0.2 && distance < 5 && distance > -5 && state == State.STOP)
             {
                 onClick(focusedCubeWrap.cube.name);
             }
             unfocusCube();
+            slowMove = false;
 
-            if (clicktime <= 0.3 && (distance > 10 || distance < -10))
+
+            if (Mathf.Abs(dragDetaDistance) > 1)
             {
-                float x = distance;
+                float x = dragDetaDistance;
                 acce = ACCE_MIN;
-                startSpeed = Mathf.Abs(x / (clicktime * 500));
+                startSpeed = Mathf.Abs(x / (clicktime * 100));
                 if (x < 0) //左滑
                 {
                     if (speed > 0)
@@ -214,20 +220,22 @@ public class CardsMain : MonoBehaviour
                         startMove();
                     }
                 }
-            } else
-            {
-                if (slowMove == true)
-                {
-
-                }
             }
         }
 
         if (Event.current.type == EventType.MouseDrag)
         //判断当前手指是拖动事件
         {
+            if (Event.current.mousePosition.x != touchSecond.x)
+            {
+                dragDetaDistance = Event.current.mousePosition.x - touchSecond.x;
+            }
             touchSecond = Event.current.mousePosition;
             log("Gesture........... MouseDrag  touchSecond=" + touchSecond.ToString());
+
+            dragDetaTime = Time.time - dragTime;
+            dragTime = Time.time;
+
             if (slowMove == false && state != State.STOP)
             {
                 speed = 0;
@@ -247,14 +255,7 @@ public class CardsMain : MonoBehaviour
                 return;
             }
 
-            float dragTime = Time.time - downtime;
-            if (dragTime < 0.3f)
-            {
-                slowMove = false;
-            } else
-            {
-                slowMove = true;
-            }
+            slowMove = true;
             Vector2 slideDirection = touchSecond - touchFirst;
             if (slideDirection.x > 2)
             {
@@ -915,7 +916,7 @@ public class CardsMain : MonoBehaviour
             log("startMove,  sorting, not start.");
             return;
         }
-        if (speed > 0 || moveDelta > 0) return;
+        //if (speed > 0 || moveDelta > 0) return;
        
         //updateLeftAndRight();
        
