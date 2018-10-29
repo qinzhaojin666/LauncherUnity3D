@@ -77,14 +77,30 @@
     <Reference Include="UnityEngine.HoloLens">
       <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
     </Reference>
+    <Reference Include="TouchScript">
+      <HintPath>Assets/CoverFlow/TouchScript.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\CoverFlow\DetectSimplePan.cs" />
+    <Compile Include="Assets\CoverFlow\DetectTap.cs" />
+    <Compile Include="Assets\CoverFlow\FlowView.cs" />
+    <Compile Include="Assets\CoverFlow\LeanTween.cs" />
+    <Compile Include="Assets\CoverFlow\Singleton.cs" />
+    <Compile Include="Assets\CoverFlow\SmoothLookAt.cs" />
+    <Compile Include="Assets\Locomotion Setup\Locomotion\Scripts\Locomotion.cs" />
+    <Compile Include="Assets\Locomotion Setup\Scripts\JoystickToEvents.cs" />
+    <Compile Include="Assets\Locomotion Setup\Scripts\LocomotionPlayer.cs" />
     <Compile Include="Assets\Script\CardInfo.cs" />
     <Compile Include="Assets\Script\CardsMain.cs" />
+    <Compile Include="Assets\Script\ChinarCamera.cs" />
+    <Compile Include="Assets\Script\ChinarMirror.cs" />
+    <Compile Include="Assets\Script\ChinarMirrorPlane.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Materials\Plugins\Android\AndroidManifest.xml" />
     <None Include="Assets\Plugins\MoveLightImage.shader" />
+    <None Include="Assets\Plugins\NewSurfaceShader 1.shader" />
     <None Include="Assets\Plugins\NewSurfaceShader.shader" />
     <None Include="Assets\Plugins\NewUnlitShader.shader" />
     <None Include="Assets\flow\Flow.shader" />
