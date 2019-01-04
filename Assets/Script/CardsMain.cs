@@ -394,12 +394,8 @@ public class CardsMain : MonoBehaviour
             return;
         }
         string[] cardsList = cards.Split('#');
-        if (cardsList.Length != 9)
-        {
-            sorting = false;
-            log("sortCards, input cards error,  size: " + cardsList.Length);
-            return;
-        }
+        log("sortCards,  cards size: " + cardsList.Length);
+
         GameObject cube0 = getCubeWithTag(cardsList[0]);
         updateCubePosion(cube0, cubePosion0);
         cubeWrap0.cube = cube0;
@@ -440,10 +436,12 @@ public class CardsMain : MonoBehaviour
         cubeWrap7.cube = cube7;
         cubeWrap7.startPosion = cubePosion7;
 
+        /*
         GameObject cube8 = getCubeWithTag(cardsList[8]);
         updateCubePosion(cube8, cubePosion8);
         cubeWrap8.cube = cube8;
         cubeWrap8.startPosion = cubePosion8;
+        */
 
         updateNextLeft();
         sorting = false;
@@ -509,10 +507,7 @@ public class CardsMain : MonoBehaviour
     {
         log("onLanguageChanged, language:" + language);
         this.language = language;
-        if (cubesList.Count != 9)
-        {
-            return;
-        }
+
         foreach (CubeWrap cubeWrap in cubesList)
         {
             cubeWrap.cube.SendMessage("changeLanguage", language);
@@ -636,6 +631,7 @@ public class CardsMain : MonoBehaviour
         cubeWrap7.startPosion = cubePosion7;
         cubesList.Add(cubeWrap7);
 
+        /*
         Position8 = kuwo.transform.position;
         Angle8 = kuwo.transform.localEulerAngles;
         Scal8 = kuwo.transform.localScale;
@@ -643,6 +639,7 @@ public class CardsMain : MonoBehaviour
         cubeWrap8.cube = kuwo;
         cubeWrap8.startPosion = cubePosion8;
         cubesList.Add(cubeWrap8);
+        */
 
         updateNextLeft();
         /*
@@ -961,8 +958,9 @@ public class CardsMain : MonoBehaviour
 
         if (Vector3.Distance(currentP, Position0) < DISTANCE_DELTA)
         {
-            log("nextLeftPosion: cubePosion8");
-            return cubePosion8;
+            log("nextLeftPosion: cubePosion7");
+            // return cubePosion8;
+            return cubePosion7;
         }
  
         if (Vector3.Distance(currentP, Position1) < DISTANCE_DELTA)
@@ -1008,11 +1006,13 @@ public class CardsMain : MonoBehaviour
             return cubePosion6;
         }
 
+        /*
         if (Vector3.Distance(currentP, Position8) < DISTANCE_DELTA)
         {
             log("nextLeftPosion: cubePosion7");
             return cubePosion7;
         }
+        *
         /*
         if (Vector3.Distance(currentP, LeftoutsideP) < DISTANCE_DELTA)
         {
@@ -1070,15 +1070,19 @@ public class CardsMain : MonoBehaviour
 
         if (Vector3.Distance(currentP, Position7) < DISTANCE_DELTA)
         {
-            log("nextLeftPosion: cubePosion8");
-            return cubePosion8;
+            log("nextLeftPosion: cubePosion0");
+           // return cubePosion8;
+            return cubePosion0;
         }
+
+        /*
         if (Vector3.Distance(currentP, Position8) < DISTANCE_DELTA)
         {
             log("nextRightPosion: cubePosion0");
             return cubePosion0;
         }
         log("----nextRightPosion default:cubePosion0 ");
+        */
 
         return cubePosion0;
     }
