@@ -32,6 +32,7 @@ public class CardsMain : MonoBehaviour
     CubeWrap cubeWrap7 = new CubeWrap();
     CubeWrap cubeWrap8 = new CubeWrap();
 
+    CubeWrap leftsideCubeWrap = new CubeWrap();
 
     static Vector3 Position0 = new Vector3(0f - X_OFFSET, 0.1f, 0f);
     static Vector3 Position1 = new Vector3(-2f - X_OFFSET, 0f, 10f);
@@ -127,20 +128,18 @@ public class CardsMain : MonoBehaviour
         if (Event.current.type == EventType.MouseDown)
         //判断当前手指是按下事件 
         {
-            if (Event.current.mousePosition.y > 600 || Event.current.mousePosition.y < 160)
-            {
-                return;
-            }
             touchDown = Event.current.mousePosition;
             touchFirst = Event.current.mousePosition;//记录开始按下的位置
+            touchSecond = Event.current.mousePosition;
             touchThird = Event.current.mousePosition;
             slowTouchStart = Event.current.mousePosition;
-            log("Gesture.............................. MouseDown   mousePosition:" + touchFirst.ToString());
-
-            if (touchDown.y>600 || touchDown.x <160)
+            if (!withinTouchArea())
             {
                 return;
             }
+            log("Gesture.............................. MouseDown   mousePosition:" + touchFirst.ToString());
+
+            dragDetaDistance = 0;
             mouseDown = true;
             downtime = Time.time;
 
@@ -150,25 +149,27 @@ public class CardsMain : MonoBehaviour
                 if(focusedCubePosion != null)
                 {
                     focusedCubeWrap = focusCube(focusedCubePosion);
+                    log("Gesture...........focusedCubeWrap---------------------------- ");
                 }
             }
         }
 
         if (Event.current.type == EventType.MouseUp)
         {
-            if (Event.current.mousePosition.y > 600 || Event.current.mousePosition.y < 160)
-            {
-                return;
-            }
             mouseDown = false;
             longPressed = false;
             clicktime = Time.time - downtime;
             touchUp = Event.current.mousePosition;
             touchThird = Event.current.mousePosition;
+            touchSecond = Event.current.mousePosition;
             float distance = touchThird.x - touchFirst.x;
+            if (!withinTouchArea())
+            {
+                return;
+            }
 
-            log("Gesture.............................. MouseUp   clicktime:" + clicktime  + "  distance:" + distance  + "  touchUp:" + touchUp);
-            if (focusedCubeWrap != null && clicktime > 0.02 && clicktime < 0.2 && distance < 5 && distance > -5 && state == State.STOP)
+            log("Gesture.............................. MouseUp   clicktime:" + clicktime  + "  distance:" + distance + " state:" + state + " dragDetaDistance:" + dragDetaDistance + "  touchUp:" + touchUp );
+            if (focusedCubeWrap != null && clicktime > 0.02 && clicktime < 0.2 && Mathf.Abs(distance) < 5 && state == State.STOP)
             {
                 onClick(focusedCubeWrap.cube.name);
             }
@@ -176,7 +177,7 @@ public class CardsMain : MonoBehaviour
             slowMove = false;
 
 
-            if (Mathf.Abs(dragDetaDistance) > 1)
+            if (Mathf.Abs(dragDetaDistance) > 2)
             {
                 float x = dragDetaDistance;
                 acce = ACCE_MIN;
@@ -234,11 +235,10 @@ public class CardsMain : MonoBehaviour
                 }
             }
         }
-
         if (Event.current.type == EventType.MouseDrag)
         //判断当前手指是拖动事件
         {
-            if (Event.current.mousePosition.y > 600 || Event.current.mousePosition.y < 160)
+            if (!withinTouchArea())
             {
                 return;
             }
@@ -247,8 +247,9 @@ public class CardsMain : MonoBehaviour
             {
                 dragDetaDistance = Event.current.mousePosition.x - touchSecond.x;
             }
+            log("Gesture........... MouseDrag  touchSecond = " + touchSecond.ToString() + "  dragDetaDistance = " + dragDetaDistance );
             touchSecond = Event.current.mousePosition;
-            log("Gesture........... MouseDrag  touchSecond=" + touchSecond.ToString());
+            log("Gesture........... MouseDrag  touchSecond =" + touchSecond.ToString());
 
             dragDetaTime = Time.time - dragTime;
             dragTime = Time.time;
@@ -274,6 +275,7 @@ public class CardsMain : MonoBehaviour
 
             slowMove = true;
             Vector2 slideDirection = touchSecond - touchFirst;
+            log("Gesture..................................... MouseDrag  slideDirection.x = " + slideDirection.x);
             if (slideDirection.x > 2)
             {
                 state = State.RIGHT;
@@ -287,6 +289,15 @@ public class CardsMain : MonoBehaviour
             log("Gesture..................................... MouseDrag  slowMove=" + slowMove + "  ,state=" + state);
 
         }   // 滑动方法
+    }
+
+    bool withinTouchArea()
+    {
+        if (Event.current.mousePosition.y > 600 || Event.current.mousePosition.y < 160)
+        {
+            return false;
+        }
+        return true;
     }
 
     CubePosion getTouchedCube(Vector2 position)
@@ -745,6 +756,16 @@ public class CardsMain : MonoBehaviour
         }
     }
 
+    
+    void onLeftsideIndexChanged(int index)
+    {
+        if (DEBUG) Debug.Log("onLeftsideIndexChanged, index:" + index);
+        if (jo != null)
+        {
+            jo.Call("onLeftsideIndexChanged", index);
+        }
+    }
+
     void onMoveEnd(int index)
     {
         if (DEBUG) Debug.Log("onMoveEnd, index:" + index);
@@ -788,15 +809,19 @@ public class CardsMain : MonoBehaviour
         {
             float longClickTime = Time.time - downtime;
             float distance = touchSecond.x - touchDown.x;
-            log("Update: longPressed distance= " + distance);
+            //log("Update: touchDown->MouseDrag  distance= " + distance);
             if (!longPressed && longClickTime > 0.5 && state == State.STOP && distance < 10 && distance > -10)
             {
                 longPressed = true;
                 onLongPressed();
             }
         }
+        if (longPressed)
+        {
+            log("Update:  longPressed return ");
+            return;
+        }
         speed = speed - acce;
-        //  log("Update:  speed= " + speed);
        // log("Update:  speed= " + speed);
         if (speed > 4f)
         {
@@ -813,11 +838,16 @@ public class CardsMain : MonoBehaviour
             foreach (CubeWrap cube in cubesList)
             {
                 cube.startPosion = currentKeyPosion(cube.cube.transform.position); 
+                if (cube.startPosion == cubePosion0)
+                {
+                    onLeftsideIndexChanged(cubesList.IndexOf(cube));
+                }
             }
             if (state != State.STOP)
             {
                 updateLeftAndRight();
-            } else
+            }
+            else
             {
                 log("Update，Stop 0 ");
                 return;
@@ -825,52 +855,16 @@ public class CardsMain : MonoBehaviour
             if (speed <= 0)
             {
                 state = State.STOP;
-                int index = getLeftsideCubeIndex();
-                onMoveEnd(index);
-                log("[[ move stop ]]]]]]]]]]]]]]]]]]]]]]]");
+              //  int index = getLeftsideCubeIndex();
+              //  onMoveEnd(index);
+                log("[[MoveStop ]]----[1]");
                 return;
             }
         }
+
         if (speed > 1.8f)
         {
             moveDelta = moveDelta + Time.deltaTime * speed;
-            if (state == State.LEFT)
-            {
-                moveToLeft(moveDelta);
-            } else if (state == State.RIGHT)
-            {
-                moveToRight(moveDelta);
-            } else
-            {
-                log("Update，Stop 1 ");
-                return;
-            }
-
-        } else
-        {
-            if (slowMove && mouseDown)
-            {
-                float d = Mathf.Abs(touchSecond.x - touchFirst.x);
-                moveDelta = d / 300;
-                log("Update:  slowMove   moveDelta=" + moveDelta  + "  state=" + state);
-            } else
-            {
-                if (state == State.STOP)
-                {
-                    return;
-                }
-                if (moveDelta > 0f)
-                {
-                    moveDelta = moveDelta + Time.deltaTime * 1.8f;
-                }
-                // log("Update:  speed= " + speed + "  moveDelta=" + moveDelta);
-              
-            }
-
-            if (moveDelta == 0)
-            {
-                return;
-            }
             if (state == State.LEFT)
             {
                 moveToLeft(moveDelta);
@@ -879,8 +873,61 @@ public class CardsMain : MonoBehaviour
             {
                 moveToRight(moveDelta);
             }
-           
+            else
+            {
+                log("Update，Stop 1 ");
+                return;
+            }
+        }
+        else
+        {
+            if (slowMove && mouseDown)
+            {
+                float d = Mathf.Abs(touchSecond.x - touchFirst.x);
+                moveDelta = d / 300;
+               // log("Update:  slowMove   moveDelta=" + moveDelta  + "  state=" + state);
+            }
+            else
+            {
+                if (state == State.STOP)
+                {
+                    return;
+                }
 
+                if (moveDelta > 0f)
+                {
+                    moveDelta = moveDelta + Time.deltaTime * 1.8f;
+                }
+             //   log("Update:  speed= " + speed + "  moveDelta=" + moveDelta);
+
+                if (speed < 0 && moveDelta == 0)
+                {
+                    state = State.STOP;
+                   // int index = getLeftsideCubeIndex();
+                  //  onMoveEnd(index);
+                    log("[[ MoveStop ]---[2]");
+                    return;
+                }
+
+            }
+
+            if (moveDelta == 0)
+            {
+                return;
+            }
+
+            if (state == State.LEFT)
+            {
+                moveToLeft(moveDelta);
+            }
+            else if (state == State.RIGHT)
+            {
+                moveToRight(moveDelta);
+            }
+            else
+            {
+                log("Update，Stop 3 ");
+            }
         }
 
     }
@@ -952,7 +999,7 @@ public class CardsMain : MonoBehaviour
 
     void moveToLeft(float delta)
     {
-        log("---moveToLeft---  delta:" + delta );
+        //log("---moveToLeft---  delta:" + delta );
         foreach (CubeWrap cubeWrap in cubesList)
         {
             cubeWrap.cube.transform.position = Vector3.Lerp(cubeWrap.startPosion.position, cubeWrap.leftPosion.position, delta);
@@ -970,7 +1017,7 @@ public class CardsMain : MonoBehaviour
 
     void moveToRight(float delta)
     {
-         log("---moveToRight---  delta:" + delta  );
+        // log("---moveToRight---  delta:" + delta  );
         foreach (CubeWrap cubeWrap in cubesList)
         {
             cubeWrap.cube.transform.position = Vector3.Lerp(cubeWrap.startPosion.position, cubeWrap.rightPosion.position, delta);
