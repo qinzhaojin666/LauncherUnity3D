@@ -1080,14 +1080,20 @@ public class CardsMain : MonoBehaviour
 
     int getLeftsideCubeIndex()
     {
-        foreach (CubeWrap cube in cubesList)
+        int index = 0;
+        CubeWrap cw = (CubeWrap)cubesList[0];
+        float tempDistance = Vector3.Distance(cw.cube.transform.position, Position0);
+        for(int i= 1; i < cubesList.Count; i++)
         {
-            if (Vector3.Distance(cube.cube.transform.position, Position0) < DISTANCE_DELTA)
+            cw = (CubeWrap)cubesList[i];
+            float distance = Vector3.Distance(cw.cube.transform.position, Position0);
+            if (distance < tempDistance)
             {
-                return cubesList.IndexOf(cube);
+                tempDistance = distance;
+                index = i;
             }
         }
-        return -1;
+        return index;
     }
 
     void changeStartPosition()
@@ -1100,9 +1106,7 @@ public class CardsMain : MonoBehaviour
 
     CubePosion currentKeyPosion(Vector3 currentP)
     {
-        Vector3 nearest = Position0;
-        float distance = Vector3.Distance(currentP, Position0);
-        if (distance < DISTANCE_DELTA)
+        if (Vector3.Distance(currentP, Position0) < DISTANCE_DELTA)
         {
             return cubePosion0;
         }
