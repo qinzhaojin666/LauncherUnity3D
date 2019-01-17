@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CardsMain : MonoBehaviour
 {
     static bool DEBUG = true;
     static bool READY = false;
-    static float DISTANCE_DELTA = 1.1F;
+    static float DISTANCE_DELTA = 2.1F;
     static float X_OFFSET = 19f;
     static float ACCE_MIN = 0.015f;
     static float ACCE_MAX = 0.15f;
@@ -121,8 +123,47 @@ public class CardsMain : MonoBehaviour
 
     AndroidJavaClass jc ;
     AndroidJavaObject jo;
-
     public Texture2D img;
+
+
+    AsyncOperation async;
+    //自行决定
+    //UGU
+    public Slider m_pProgress;
+    //NGUI
+    // public UISlider m_pProgress;
+    private int progress = 0;
+    // Use this for initialization
+
+    IEnumerator LoadScenes()
+    {
+        int nDisPlayProgress = 0;
+        async = SceneManager.LoadSceneAsync("LoadingScene");
+        async.allowSceneActivation = false;
+        m_pProgress = FindObjectOfType<Slider>();
+
+        while (async.progress < 0.9f)
+        {
+            progress = (int)async.progress * 100;
+            while (nDisPlayProgress < progress)
+            {
+                ++nDisPlayProgress;
+                m_pProgress.value = (float)nDisPlayProgress / 100;
+                yield return new WaitForEndOfFrame();
+            }
+            yield return null;
+        }
+        progress = 100;
+        while (nDisPlayProgress < progress)
+        {
+            ++nDisPlayProgress;
+            m_pProgress.value = (float)nDisPlayProgress / 100;
+            yield return new WaitForEndOfFrame();
+        }
+        async.allowSceneActivation = true;
+
+    }
+
     void slideGesture()   // 滑动方法
     {
         if (Event.current.type == EventType.MouseDown)
@@ -181,7 +222,7 @@ public class CardsMain : MonoBehaviour
             {
                 float x = dragDetaDistance;
                 acce = ACCE_MIN;
-                startSpeed = Mathf.Abs(x / (clicktime * 100));
+                startSpeed = Mathf.Abs(x / (clicktime * 200));
                 if (x < 0) //左滑
                 {
                     if (speed > 0)
@@ -567,9 +608,11 @@ public class CardsMain : MonoBehaviour
         }
     }
 
+
     // Use this for initialization
     void Start()
     {
+       // StartCoroutine(LoadScenes());
         callAndroid();
         onUnityBeforeStart();
         navi = GameObject.Find("navi");
@@ -835,12 +878,14 @@ public class CardsMain : MonoBehaviour
                 log("Update:   slowMove reset !");
             }
             moveDelta = 0;
+            changeStartPosition();
             foreach (CubeWrap cube in cubesList)
             {
-                cube.startPosion = currentKeyPosion(cube.cube.transform.position); 
+               // cube.startPosion = currentKeyPosion(cube.cube.transform.position); 
                 if (cube.startPosion == cubePosion0)
                 {
                     onLeftsideIndexChanged(cubesList.IndexOf(cube));
+                    break;
                 }
             }
             if (state != State.STOP)
@@ -884,8 +929,8 @@ public class CardsMain : MonoBehaviour
             if (slowMove && mouseDown)
             {
                 float d = Mathf.Abs(touchSecond.x - touchFirst.x);
-                moveDelta = d / 300;
-               // log("Update:  slowMove   moveDelta=" + moveDelta  + "  state=" + state);
+                moveDelta = d / 280;
+                log("Update:  slowMove   moveDelta=" + moveDelta  + "  state=" + state);
             }
             else
             {
@@ -897,6 +942,7 @@ public class CardsMain : MonoBehaviour
                 if (moveDelta > 0f)
                 {
                     moveDelta = moveDelta + Time.deltaTime * 1.8f;
+                    log("Update: not slowMove, speed= " + speed + "  moveDelta=" + moveDelta);
                 }
              //   log("Update:  speed= " + speed + "  moveDelta=" + moveDelta);
 
@@ -992,9 +1038,9 @@ public class CardsMain : MonoBehaviour
        
         int startIndex = getLeftsideCubeIndex();
         onMoveStart(startIndex);
-        moveDelta = Time.deltaTime;
+        moveDelta = moveDelta + Time.deltaTime;
         speed = startSpeed;
-        log("startMove,  >>>>>>>>>>>>>  startSpeed: " + startSpeed + "  startIndex: " + startIndex);
+        log("startMove,  >>>>>>>>>>>>>  startSpeed: " + startSpeed + "  startIndex: " + startIndex + "  moveDelta=" + moveDelta);
     }
 
     void moveToLeft(float delta)
@@ -1044,10 +1090,19 @@ public class CardsMain : MonoBehaviour
         return -1;
     }
 
+    void changeStartPosition()
+    {
+        foreach (CubeWrap cube in cubesList)
+        {
+            cube.startPosion = currentKeyPosion(cube.cube.transform.position);
+        }
+    }
+
     CubePosion currentKeyPosion(Vector3 currentP)
     {
-
-        if (Vector3.Distance(currentP, Position0) < DISTANCE_DELTA)
+        Vector3 nearest = Position0;
+        float distance = Vector3.Distance(currentP, Position0);
+        if (distance < DISTANCE_DELTA)
         {
             return cubePosion0;
         }
