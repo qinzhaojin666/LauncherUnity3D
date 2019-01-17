@@ -10,7 +10,7 @@ public class CardsMain : MonoBehaviour
     static bool READY = false;
     static float DISTANCE_DELTA = 2.1F;
     static float X_OFFSET = 19f;
-    static float ACCE_MIN = 0.015f;
+    static float ACCE_MIN = 0.018f;
     static float ACCE_MAX = 0.15f;
 
     GameObject navi;
@@ -314,9 +314,10 @@ public class CardsMain : MonoBehaviour
                 return;
             }
 
-            slowMove = true;
             Vector2 slideDirection = touchSecond - touchFirst;
             log("Gesture..................................... MouseDrag  slideDirection.x = " + slideDirection.x);
+            slowMove = true;
+
             if (slideDirection.x > 2)
             {
                 state = State.RIGHT;
