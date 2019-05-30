@@ -30,8 +30,27 @@ public class CardInfo : MonoBehaviour {
         }
     }
 
-    public void updateTexture(int index)
+    public void updateTexture(string index)
     {
-        gameObject.GetComponent<Renderer>().material.mainTexture = textures[index];
+        if (index == null) return;
+        if (index.Equals("0"))
+        {
+            gameObject.GetComponent<Renderer>().material.mainTexture = textures[0];
+        }
+        else if (index.Equals("1"))
+        {
+            gameObject.GetComponent<Renderer>().material.mainTexture = textures[1];
+        }
+        else if (index.Equals("2"))
+        {
+            gameObject.GetComponent<Renderer>().material.mainTexture = textures[2];
+        }
+        else if (index.Equals("3"))
+        {
+            gameObject.GetComponent<Renderer>().material.mainTexture = textures[3];
+        } else
+        {
+            Debug.Log("updateTexture, invalid index !");
+        }
     }
 }

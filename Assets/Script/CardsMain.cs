@@ -210,7 +210,7 @@ public class CardsMain : MonoBehaviour
             }
 
             log("Gesture.............................. MouseUp   clicktime:" + clicktime  + "  distance:" + distance + " state:" + state + " dragDetaDistance:" + dragDetaDistance + "  touchUp:" + touchUp );
-            if (focusedCubeWrap != null && clicktime > 0.02 && clicktime < 0.2 && Mathf.Abs(distance) < 5 && state == State.STOP)
+            if (focusedCubeWrap != null && clicktime > 0.01 && clicktime < 0.2 && Mathf.Abs(distance) <= 4 && state == State.STOP)
             {
                 onClick(focusedCubeWrap.cube.name);
             }
@@ -218,7 +218,7 @@ public class CardsMain : MonoBehaviour
             slowMove = false;
 
 
-            if (Mathf.Abs(dragDetaDistance) > 2)
+            if (Mathf.Abs(dragDetaDistance) > 4)
             {
                 float x = dragDetaDistance;
                 acce = ACCE_MIN;
@@ -290,9 +290,10 @@ public class CardsMain : MonoBehaviour
             }
             log("Gesture........... MouseDrag  touchSecond = " + touchSecond.ToString() + "  dragDetaDistance = " + dragDetaDistance );
             touchSecond = Event.current.mousePosition;
-            log("Gesture........... MouseDrag  touchSecond =" + touchSecond.ToString());
 
             dragDetaTime = Time.time - dragTime;
+            log("Gesture........... MouseDrag  touchSecond =" + touchSecond.ToString() + "   dragDetaTime=" + dragDetaTime);
+
             dragTime = Time.time;
 
             if (slowMove == false && state != State.STOP)
@@ -318,10 +319,10 @@ public class CardsMain : MonoBehaviour
             log("Gesture..................................... MouseDrag  slideDirection.x = " + slideDirection.x);
             slowMove = true;
 
-            if (slideDirection.x > 2)
+            if (slideDirection.x > 4)
             {
                 state = State.RIGHT;
-            } else if (slideDirection.x < -2)
+            } else if (slideDirection.x < -4)
             {
                 state = State.LEFT;
             } else
@@ -580,7 +581,7 @@ public class CardsMain : MonoBehaviour
     //设置多媒体卡片上的信息,infor: music,radio
     void setMediaCardsInfor(string infor)
     {
-        log("setMediaCardsInfor, infor:" + infor);
+        log("setMediaCardsInfor, infor: " + infor);
         if (infor == null)
         {
             return;
@@ -589,22 +590,27 @@ public class CardsMain : MonoBehaviour
         {
             if (language.Equals("zh"))
             {
-                media.SendMessage("updateTexture", 0);
-
-            } else
-            {
-                media.SendMessage("updateTexture", 1);
+                log("updateTexture, 0");
+                media.SendMessage("updateTexture", "0");
             }
-        } else if (infor.Equals("music"))
+            else
+            {
+                log("updateTexture, 1");
+                media.SendMessage("updateTexture", "1");
+            }
+        }
+        else if (infor.Equals("music"))
         {
             if (language.Equals("zh"))
             {
-                media.SendMessage("updateTexture", 2);
+                log("updateTexture, 2");
+                media.SendMessage("updateTexture", "2");
 
             }
             else
             {
-                media.SendMessage("updateTexture", 3);
+                log("updateTexture, 3");
+                media.SendMessage("updateTexture", "3");
             }
         }
     }
